@@ -7,5 +7,4 @@
   (answered-correctly? [q] "Is question answered correctly?")
   (answer [q n] "Answer this question")
   (unanswer [q n] "Undone your answer")
-  (view [q] "View for this question"))
-
+  (view [q on-select-answ on-unselect-answ] "View for this question"))

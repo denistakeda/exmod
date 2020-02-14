@@ -71,7 +71,7 @@
   [:div.quiz
    (navigation-view quiz)
    (finish-button quiz)
-   [question/view (current-q quiz)]])
+   [question/view (current-q quiz) #(dispatch [::answer-current %]) #(dispatch [::unanswer-current %])]])
 
 (defn navigation-view
   "Navigation panel"

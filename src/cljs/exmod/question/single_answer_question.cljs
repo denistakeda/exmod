@@ -1,6 +1,5 @@
 (ns exmod.question.single-answer-question
   (:require [exmod.question :refer [Question]]
-            [exmod.quiz :as quiz]
             [re-frame.core :refer [dispatch]]))
 
 (declare answer-view)
@@ -20,14 +19,14 @@
   (unanswer [q n]
     (assoc q :selected nil))
 
-  (view [{:keys [text answers correct selected]}]
+  (view [{:keys [text answers correct selected]} on-select-answ _]
     [:div.question
      [:div.question-text text]
      [:div.question-answers
-      (map-indexed (partial answer-view selected) answers)]]))
+      (map-indexed (partial answer-view selected on-select-answ) answers)]]))
 
-(defn answer-view [selected-id idx answer]
-  ^{:key answer} [:div.answer {:on-click #(dispatch [::quiz/answer-current idx])
+(defn answer-view [selected-id on-select-answ idx answer]
+  ^{:key answer} [:div.answer {:on-click (partial on-select-answ idx)
                                :class   (if (= selected-id idx) "selected")}
                   answer])
 
