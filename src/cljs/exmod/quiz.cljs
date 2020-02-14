@@ -3,7 +3,7 @@
    [exmod.question :as question]
    [re-frame.core :refer [dispatch]]))
 
-(declare has-nth-q quiz-view score-view navigation-view)
+(declare has-nth-q quiz-view score-view navigation-view finish-button)
 
 (defn quiz
   "Data constructor"
@@ -56,6 +56,9 @@
 (defn- current-q [quiz]
   (get (::questions quiz) (::current quiz)))
 
+(defn- fully-answered? [quiz]
+  (every? question/answered? (::questons quiz)))
+
 ;; -- Views --
 
 
@@ -67,6 +70,7 @@
 (defn quiz-view [quiz]
   [:div.quiz
    (navigation-view quiz)
+   (finish-button quiz)
    [question/view (current-q quiz)]])
 
 (defn navigation-view
@@ -85,6 +89,10 @@
    [:button {:on-click #(dispatch [::next])
              :disabled (not (has-next-q quiz))}
     ">>"]])
+
+(defn finish-button [quiz]
+  (when (fully-answered? quiz)
+    [:button.finish-button {:on-click #(dispatch [::finish-quiz])} "Finish"]))
 
 (defn score-view [quiz]
   [:div.score "Score view"])
