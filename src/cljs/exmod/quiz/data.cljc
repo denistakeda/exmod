@@ -54,6 +54,27 @@
   [quiz n]
   (update-in quiz [::questions (::current quiz)] #(question/unanswer % n)))
 
+;; -- Data extractors --
+
+(defn has-nth-q?
+  "Does the quiz has question number n"
+  [quiz n]
+  (< n (count (::questions quiz))))
+
+(defn has-next-q? [quiz]
+  (has-nth-q? quiz (inc (::current quiz))))
+
+(defn has-prev-q? [quiz]
+  (has-nth-q? quiz (dec (::current quiz))))
+
+(defn current-q [quiz]
+  (get (::questions quiz) (::current quiz)))
+
+(defn fully-answered? [quiz]
+  (every? question/answered? (::questons quiz)))
+
+;; -- View related staff --
+
 (defn view [quiz]
   (quiz-view/view
    #::quiz-view
@@ -71,22 +92,3 @@
     :on-select-question     ::goto-question
     :on-answer-current      ::answer-current
     :on-unanswer-current    ::unanswer-current}))
-
-;; -- Private helpers --
-
-(defn- has-nth-q?
-  "Does the quiz has question number n"
-  [quiz n]
-  (< n (count (::questions quiz))))
-
-(defn- has-next-q? [quiz]
-  (has-nth-q? quiz (inc (::current quiz))))
-
-(defn- has-prev-q? [quiz]
-  (has-nth-q? quiz (dec (::current quiz))))
-
-(defn- current-q [quiz]
-  (get (::questions quiz) (::current quiz)))
-
-(defn- fully-answered? [quiz]
-  (every? question/answered? (::questons quiz)))
