@@ -2,6 +2,7 @@
   (:require
    [exmod.question :as question]
    [exmod.quiz.view :as quiz-view]
+   [clojure.spec.gen.alpha :as gen]
    [re-frame.core :refer [dispatch]]
    [clojure.spec.alpha :as s]))
 
@@ -9,21 +10,37 @@
 
 ;; -- Data definition and constructor --
 
-(s/def ::questons (s/coll-of any? :min-count 1))
+(s/def ::questions (s/coll-of record? :min-count 1))
 (s/def ::current int?)
-(s/def ::score int?)
+(s/def ::score (s/nilable int?))
 
 ;; -- Quiz definition --
 
 (s/def ::quiz
-  (s/and (s/keys :req [::questons ::current]
-                 :opt [::score])
-         #(< (::current %) (-> ::questions count %))))
+  (s/and
+     ;; The shape
+   (s/keys :req [::questions ::current]
+           :opt [::score])
+
+     ;; Current question should be between 0 and count of questions minus one
+   (fn [{:keys [::current ::questions]}]
+     (and (>= current 0) (< current (count questions))))
+
+     ;; Score field should be either nil or between 0 and count of questions
+   (fn [{:keys [::score ::questions]}]
+     (s/or :not-scored #(nil? score)
+           :scored     #(<= 0 score (count questions))))))
+
+;; -- Constructors --
+
+(s/fdef quiz
+  :args (s/and (s/cat :questions (s/coll-of any? :min-count 1)))
+  :ret ::quiz)
 (defn quiz
   "Data constructor"
   [questions]
   {::questions questions
-   ::current 0})
+   ::current   0})
 
 ;; -- Data manipulations --
 
@@ -78,17 +95,17 @@
 (defn view [quiz]
   (quiz-view/view
    #::quiz-view
-   {:fully-answered         (fully-answered? quiz)
-    :has-previous-question? (has-prev-q? quiz)
-    :has-next-question?     (has-next-q? quiz)
-    :current-number         (::current quiz)
-    :questions-count        (count (::questions quiz))
-    :current-question       (current-q quiz)
-    :scored?                (not (nil? (::score quiz)))
+    {:fully-answered         (fully-answered? quiz)
+     :has-previous-question? (has-prev-q? quiz)
+     :has-next-question?     (has-next-q? quiz)
+     :current-number         (::current quiz)
+     :questions-count        (count (::questions quiz))
+     :current-question       (current-q quiz)
+     :scored?                (not (nil? (::score quiz)))
 
-    :on-finish-quiz         ::finish-quiz
-    :on-next-question       ::next
-    :on-previous-question   ::prev
-    :on-select-question     ::goto-question
-    :on-answer-current      ::answer-current
-    :on-unanswer-current    ::unanswer-current}))
+     :on-finish-quiz         ::finish-quiz
+     :on-next-question       ::next
+     :on-previous-question   ::prev
+     :on-select-question     ::goto-question
+     :on-answer-current      ::answer-current
+     :on-unanswer-current    ::unanswer-current}))

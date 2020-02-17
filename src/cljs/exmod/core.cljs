@@ -5,12 +5,14 @@
    [exmod.events :as events]
    [exmod.views :as views]
    [exmod.config :as config]
-   ))
+   [orchestra-cljs.spec.test :as st]))
 
 
 (defn dev-setup []
   (when config/debug?
-    (println "dev mode")))
+    (println "dev mode")
+    (st/instrument)
+    (println "instrumentation enabled")))
 
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)
