@@ -2,7 +2,7 @@
   (:require
    [re-frame.core :as re-frame]
    [exmod.subs :as subs]
-   [exmod.quiz :as quiz]
+   [exmod.quiz.data :as quiz]
    ))
 
 (defn main-panel []

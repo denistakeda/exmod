@@ -4,7 +4,7 @@
    [day8.re-frame.tracing :refer-macros [fn-traced]]
    ;; Local
    [exmod.db :as db]
-   [exmod.quiz :as quiz]
+   [exmod.quiz.data :as quiz]
    ))
 
 ;; -- Global --

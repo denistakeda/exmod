@@ -1,7 +1,7 @@
 (ns exmod.db
   (:require
    [exmod.question.single-answer-question :refer [single-answer-question]]
-   [exmod.quiz :refer [quiz]]))
+   [exmod.quiz.data :refer [quiz]]))
 
 (def questions
   [(single-answer-question "Do you like Clojure" ["Yes" "No" "I don't know"] 0)

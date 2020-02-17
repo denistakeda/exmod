@@ -27,7 +27,7 @@
       (map-indexed (partial answer-view selected on-select-answ) answers)]]))
 
 (defn answer-view [selected-id on-select-answ idx answer]
-  ^{:key answer} [:div.answer {:on-click (partial on-select-answ idx)
+  ^{:key answer} [:div.answer {:on-click #(dispatch [on-select-answ idx])
                                :class   (if (= selected-id idx) "selected")}
                   answer])
 
