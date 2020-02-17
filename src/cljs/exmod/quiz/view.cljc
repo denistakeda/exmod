@@ -10,8 +10,8 @@
 (s/def ::fully-answered boolean?)
 (s/def ::has-previous-question? boolean?)
 (s/def ::has-next-question? boolean?)
-(s/def ::current-number (s/and int? #(> % 0)))
-(s/def ::questions-count (s/and int? #(> % 0)))
+(s/def ::current-number (s/and int? #(>= % 0)))
+(s/def ::questions-count (s/and int? #(>= % 0)))
 (s/def ::current-question record?)
 (s/def ::scored? boolean?)
 
@@ -22,19 +22,43 @@
 (s/def ::on-answer-current keyword?)
 (s/def ::on-unanswer-current keyword?)
 
+(s/def ::full-data
+  (s/keys :req [::fully-answered
+                ::has-previous-question?
+                ::has-next-question?
+                ::current-number
+                ::questions-count
+                ::current-question
+                ::scored?
+
+                ::on-finish-quiz
+                ::on-next-question
+                ::on-previous-question
+                ::on-select-question
+                ::on-answer-current
+                ::on-unanswer-current]))
+
 ;; -- Views --
+
+(s/fdef view
+  :args (s/and (s/cat :data ::full-data))
+  :ret vector?)
 
 (defn view [data]
   (if (::scored? data)
     (score-view data)
     (quiz-view data)))
 
+
+(s/fdef quiz-view
+  :args (s/and (s/cat :data ::full-data))
+  :ret vector?)
+
 (defn- quiz-view
   [{:keys [::current-question
            ::on-answer-current
            ::on-unanswer-current]
     :as data}]
-
   [:div.quiz
    (navigation-view data)
    (finish-button data)
