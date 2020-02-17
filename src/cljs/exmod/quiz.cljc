@@ -1,10 +1,22 @@
 (ns exmod.quiz
   (:require
    [exmod.question :as question]
-   [re-frame.core :refer [dispatch]]))
+   [re-frame.core :refer [dispatch]]
+   [clojure.spec.alpha :as s]))
 
 (declare has-nth-q quiz-view score-view navigation-view finish-button)
 
+;; -- Data definition and constructor --
+
+(s/def ::questons (s/coll-of any? :min-count 1))
+(s/def ::current int?)
+(s/def ::score int?)
+
+;; -- Quiz definition --
+(s/def ::quiz
+  (s/and (s/keys :req [::questons ::current]
+                 :opt [::score])
+         #(< (::current %) (-> ::questions count %))))
 (defn quiz
   "Data constructor"
   [questions]
@@ -60,7 +72,6 @@
   (every? question/answered? (::questons quiz)))
 
 ;; -- Views --
-
 
 (defn view [quiz]
   (if (nil? (::score quiz))

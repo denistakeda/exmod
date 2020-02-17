@@ -1,6 +1,7 @@
 (ns exmod.question.single-answer-question
   (:require [exmod.question :refer [Question]]
-            [re-frame.core :refer [dispatch]]))
+            [re-frame.core :refer [dispatch]]
+            [clojure.spec.alpha :as s]))
 
 (declare answer-view)
 

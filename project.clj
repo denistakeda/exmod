@@ -50,7 +50,8 @@
    {:dependencies [[binaryage/devtools "1.0.0"]
                    [day8.re-frame/re-frame-10x "0.5.1"]
                    [day8.re-frame/tracing "0.5.3"]
-                   [re-frisk "0.5.4.1"]]
+                   [re-frisk "0.5.4.1"]
+                   [org.clojure/test.check "0.9.0"]]
     :source-paths ["dev"]}
 
    :prod { :dependencies [[day8.re-frame/tracing-stubs "0.5.3"]]}}
