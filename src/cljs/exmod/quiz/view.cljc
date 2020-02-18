@@ -1,13 +1,14 @@
 (ns exmod.quiz.view
   (:require [clojure.spec.alpha :as s]
             [re-frame.core :refer [dispatch]]
-            [exmod.question :as question]))
+            [exmod.question :as question]
+            [exmod.quiz.events :as events]))
 
 (declare quiz-view score-view navigation-view finish-button)
 
 ;; -- Data definitions --
 
-(s/def ::fully-answered boolean?)
+(s/def ::fully-answered? boolean?)
 (s/def ::has-previous-question? boolean?)
 (s/def ::has-next-question? boolean?)
 (s/def ::current-number (s/and int? #(>= % 0)))
@@ -15,28 +16,14 @@
 (s/def ::current-question record?)
 (s/def ::scored? boolean?)
 
-(s/def ::on-finish-quiz keyword?)
-(s/def ::on-next-question keyword?)
-(s/def ::on-previous-question keyword?)
-(s/def ::on-select-question keyword?)
-(s/def ::on-answer-current keyword?)
-(s/def ::on-unanswer-current keyword?)
-
 (s/def ::full-data
-  (s/keys :req [::fully-answered
+  (s/keys :req [::fully-answered?
                 ::has-previous-question?
                 ::has-next-question?
                 ::current-number
                 ::questions-count
                 ::current-question
-                ::scored?
-
-                ::on-finish-quiz
-                ::on-next-question
-                ::on-previous-question
-                ::on-select-question
-                ::on-answer-current
-                ::on-unanswer-current]))
+                ::scored?]))
 
 ;; -- Views --
 
@@ -48,7 +35,6 @@
   (if (::scored? data)
     (score-view data)
     (quiz-view data)))
-
 
 (s/fdef quiz-view
   :args (s/and (s/cat :data ::full-data))
@@ -62,7 +48,7 @@
   [:div.quiz
    (navigation-view data)
    (finish-button data)
-   [question/view current-question on-answer-current on-unanswer-current]])
+   [question/view current-question ::events/answer-current ::events/unanswer-current]])
 
 (defn- navigation-view
   "Navigation panel"
@@ -77,16 +63,16 @@
            ::on-previous-question] :as data}]
 
   [:div.quiz-navigation
-   [:button {:on-click #(dispatch [on-previous-question])
+   [:button {:on-click #(dispatch [::events/prev])
              :disabled (not has-previous-question?)}
     "<<"]
 
    (for [i (range questions-count)]
-     ^{:key i} [:div.quiz-navigation-item {:on-click #(dispatch [on-select-question i])
+     ^{:key i} [:div.quiz-navigation-item {:on-click #(dispatch [::events/goto-question i])
                                            :class (if (= i current-number) "selected")}
                 (str (inc i))])
 
-   [:button {:on-click #(dispatch [on-next-question])
+   [:button {:on-click #(dispatch [::events/next])
              :disabled (not has-next-question?)}
     ">>"]])
 

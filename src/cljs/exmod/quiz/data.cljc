@@ -1,9 +1,6 @@
 (ns exmod.quiz.data
   (:require
    [exmod.question :as question]
-   [exmod.quiz.view :as quiz-view]
-   [clojure.spec.gen.alpha :as gen]
-   [re-frame.core :refer [dispatch]]
    [clojure.spec.alpha :as s]))
 
 (declare has-nth-q? has-prev-q? has-next-q? fully-answered? current-q)
@@ -71,6 +68,11 @@
   [quiz n]
   (update-in quiz [::questions (::current quiz)] #(question/unanswer % n)))
 
+(defn count-q
+  "Count of questions"
+  [quiz]
+  (count (::questions quiz)))
+
 ;; -- Data extractors --
 
 (defn has-nth-q?
@@ -84,28 +86,11 @@
 (defn has-prev-q? [quiz]
   (has-nth-q? quiz (dec (::current quiz))))
 
+(defn scored? [quiz]
+  (not (nil? (::score quiz))))
+
 (defn current-q [quiz]
   (get (::questions quiz) (::current quiz)))
 
 (defn fully-answered? [quiz]
   (every? question/answered? (::questons quiz)))
-
-;; -- View related staff --
-
-(defn view [quiz]
-  (quiz-view/view
-   #::quiz-view
-    {:fully-answered         (fully-answered? quiz)
-     :has-previous-question? (has-prev-q? quiz)
-     :has-next-question?     (has-next-q? quiz)
-     :current-number         (::current quiz)
-     :questions-count        (count (::questions quiz))
-     :current-question       (current-q quiz)
-     :scored?                (not (nil? (::score quiz)))
-
-     :on-finish-quiz         ::finish-quiz
-     :on-next-question       ::next
-     :on-previous-question   ::prev
-     :on-select-question     ::goto-question
-     :on-answer-current      ::answer-current
-     :on-unanswer-current    ::unanswer-current}))

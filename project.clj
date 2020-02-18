@@ -9,8 +9,7 @@
                  [re-frame "0.11.0"]
                  [garden "1.3.9"]
                  [ns-tracker "0.4.0"]
-                 [orchestra "2018.12.06-2" :scope "test"]
-                 [org.clojure/test.check "0.9.0" :scope "test"]]
+                 [orchestra "2018.12.06-2" :scope "test"]]
 
   :plugins [[lein-garden "0.3.0"]
             [lein-shell "0.5.0"]]
