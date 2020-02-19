@@ -1,29 +1,34 @@
-.quiz .quiz-navigation {
+body, #app, .app {
+  width: 100%;
+  height: 100%;
+}
+
+body .quiz .quiz-navigation, #app .quiz .quiz-navigation, .app .quiz .quiz-navigation {
   display: flex;
   flex-direction: row;
 }
 
-.quiz .quiz-navigation .quiz-navigation-item, .quiz .quiz-navigation button {
+body .quiz .quiz-navigation .quiz-navigation-item, body .quiz .quiz-navigation button, #app .quiz .quiz-navigation .quiz-navigation-item, #app .quiz .quiz-navigation button, .app .quiz .quiz-navigation .quiz-navigation-item, .app .quiz .quiz-navigation button {
   flex: 1;
   text-align: center;
   cursor:    pointer;
 }
 
-.quiz .quiz-navigation .quiz-navigation-item {
+body .quiz .quiz-navigation .quiz-navigation-item, #app .quiz .quiz-navigation .quiz-navigation-item, .app .quiz .quiz-navigation .quiz-navigation-item {
   padding: 1rem;
 }
 
-.quiz .quiz-navigation .quiz-navigation-item:hover {
+body .quiz .quiz-navigation .quiz-navigation-item:hover, #app .quiz .quiz-navigation .quiz-navigation-item:hover, .app .quiz .quiz-navigation .quiz-navigation-item:hover {
   text-decoration: underline;
   background-color: #f0f0f0;
 }
 
-.quiz .quiz-navigation .quiz-navigation-item.selected {
+body .quiz .quiz-navigation .quiz-navigation-item.selected, #app .quiz .quiz-navigation .quiz-navigation-item.selected, .app .quiz .quiz-navigation .quiz-navigation-item.selected {
   font-weight: bold;
   background-color: #f0f0f0;
 }
 
-.quiz .question .question-text {
+body .quiz .question .question-text, #app .quiz .question .question-text, .app .quiz .question .question-text {
   text-align: center;
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -31,23 +36,23 @@
   font-weight: bold;
 }
 
-.quiz .question .answer {
+body .quiz .question .answer, #app .quiz .question .answer, .app .quiz .question .answer {
   text-align: center;
   font-size: 15px;
   padding: .5rem 0;
   cursor: pointer;
 }
 
-.quiz .question .answer:hover {
+body .quiz .question .answer:hover, #app .quiz .question .answer:hover, .app .quiz .question .answer:hover {
   background-color: #f0f0f0;
   text-decoration: underline;
 }
 
-.quiz .question .answer.selected {
+body .quiz .question .answer.selected, #app .quiz .question .answer.selected, .app .quiz .question .answer.selected {
   background-color: #f0f0f0;
 }
 
-.quiz .finish-button {
+body .quiz .finish-button, #app .quiz .finish-button, .app .quiz .finish-button {
   width: 100%;
   border: none;
   padding: 1rem;
@@ -58,4 +63,23 @@
   font-size: 18px;
   background-color: #28a745;
   color: white;
+}
+
+body .score, #app .score, .app .score {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+}
+
+body .score .user-score, #app .score .user-score, .app .score .user-score {
+  font-weight: bold;
+  color: #28a745;
+}
+
+body .score .total-score, #app .score .total-score, .app .score .total-score {
+  font-weight: bold;
+  color: #007bff;
 }

@@ -15,6 +15,7 @@
 (s/def ::questions-count (s/and int? #(>= % 0)))
 (s/def ::current-question record?)
 (s/def ::scored? boolean?)
+(s/def ::score (s/nilable (s/and int? #(>= % 0))))
 
 (s/def ::full-data
   (s/keys :req [::fully-answered?
@@ -23,7 +24,8 @@
                 ::current-number
                 ::questions-count
                 ::current-question
-                ::scored?]))
+                ::scored?]
+          :opt [::score]))
 
 ;; -- Views --
 
@@ -32,9 +34,11 @@
   :ret vector?)
 
 (defn view [data]
+  (println "!!!!!!" data)
   (if (::scored? data)
     (score-view data)
     (quiz-view data)))
+
 
 (s/fdef quiz-view
   :args (s/and (s/cat :data ::full-data))
@@ -50,17 +54,13 @@
    (finish-button data)
    [question/view current-question ::events/answer-current ::events/unanswer-current]])
 
+
 (defn- navigation-view
   "Navigation panel"
   [{:keys [::current-number
            ::questions-count
            ::has-next-question?
-           ::has-previous-question?
-
-           ;; Handlers
-           ::on-select-question
-           ::on-next-question
-           ::on-previous-question] :as data}]
+           ::has-previous-question?] :as data}]
 
   [:div.quiz-navigation
    [:button {:on-click #(dispatch [::events/prev])
@@ -76,9 +76,15 @@
              :disabled (not has-next-question?)}
     ">>"]])
 
-(defn- finish-button [{:keys [fully-answered? on-finish]}]
+(defn- finish-button [{:keys [::fully-answered?] :as data}]
   (when fully-answered?
-    [:button.finish-button {:on-click on-finish} "Finish"]))
+    [:button.finish-button {:on-click #(dispatch [::events/finish-quiz])} "Finish"]))
 
-(defn- score-view [quiz]
-  [:div.score "Score view"])
+(defn- score-view [{:keys [::score ::questions-count]}]
+  [:div.score
+   [:div
+    [:span "Congratulations! You answered correctly "]
+    [:span.user-score (str score)]
+    [:span " Questions of "]
+    [:span.total-score (str questions-count)]
+    [:span "!"]]])

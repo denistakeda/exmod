@@ -73,6 +73,17 @@
   [quiz]
   (count (::questions quiz)))
 
+(s/fdef finish
+  :args (s/and (s/cat :quiz ::quiz) #(fully-answered? (:quiz %)))
+  :ret (s/and ::quiz (s/keys :req [::score])))
+(defn finish
+  "Score this quiz, if all questions are answered"
+  [quiz]
+  (assoc
+   quiz
+   ::score
+   (reduce + 0 (map #(if (question/answered-correctly? %) 1 0) (::questions quiz)))))
+
 ;; -- Data extractors --
 
 (defn has-nth-q?
@@ -93,4 +104,4 @@
   (get (::questions quiz) (::current quiz)))
 
 (defn fully-answered? [quiz]
-  (every? question/answered? (::questons quiz)))
+  (every? question/answered? (::questions quiz)))

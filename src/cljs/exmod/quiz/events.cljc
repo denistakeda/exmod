@@ -36,3 +36,8 @@
  ::unanswer-current
  (fn [q [_ n]]
    (quiz/unanswer-current-q q n)))
+
+(reg-quiz-handler
+ ::finish-quiz
+ (fn [q _]
+   (quiz/finish q)))

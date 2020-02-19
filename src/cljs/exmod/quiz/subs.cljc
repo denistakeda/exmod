@@ -18,4 +18,5 @@
                      :current-number         (::quiz/current q)
                      :questions-count        (quiz/count-q q)
                      :current-question       (quiz/current-q q)
-                     :scored?                (quiz/scored? q)}))
+                     :scored?                (quiz/scored? q)
+                     :score                  (::quiz/score q)}))
