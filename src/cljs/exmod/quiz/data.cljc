@@ -3,7 +3,7 @@
    [exmod.question :as question]
    [clojure.spec.alpha :as s]))
 
-(declare has-nth-q? has-prev-q? has-next-q? fully-answered? current-q)
+(declare has-nth-q? has-prev-q? has-next-q? fully-answered? current-q count-q)
 
 ;; -- Data definition and constructor --
 
@@ -44,6 +44,11 @@
 
 ;; -- Data manipulations --
 
+(s/fdef goto-nth-q
+  :args (s/and (s/cat :quiz ::quiz :n int?)
+               #(<= 0 (:n %) (count-q (:quiz %))))
+  :ret ::quiz)
+
 (defn goto-nth-q
   "Go to question number n if it exists"
   [quiz n]
@@ -61,15 +66,27 @@
   [quiz]
   (goto-nth-q quiz (dec (:current quiz))))
 
+(s/fdef answer-current-q
+  :args (s/cat :quiz ::quiz :n int?)
+  :ret ::quiz)
+
 (defn answer-current-q
   "Answer current question"
   [quiz n]
   (update-in quiz [:questions (:current quiz)] #(question/answer % n)))
 
+(s/fdef unanswer-current-q
+  :args (s/cat :quiz ::quiz :n int?)
+  :ret ::quiz)
+
 (defn unanswer-current-q
   "Unanswer current question"
   [quiz n]
   (update-in quiz [:questions (:current quiz)] #(question/unanswer % n)))
+
+(s/fdef count-q
+  :args (s/cat :quiz ::quiz)
+  :ret int?)
 
 (defn count-q
   "Count of questions"
@@ -79,6 +96,7 @@
 (s/fdef finish
   :args (s/and (s/cat :quiz ::quiz) #(fully-answered? (:quiz %)))
   :ret (s/and ::quiz (s/keys :req-unq [:score])))
+
 (defn finish
   "Score this quiz, if all questions are answered"
   [quiz]
