@@ -15,7 +15,7 @@
 (s/def ::questions-count (s/and int? #(>= % 0)))
 (s/def ::current-question record?)
 (s/def ::scored? boolean?)
-(s/def ::score (s/nilable (s/and int? #(>= % 0))))
+(s/def ::score (s/and int? #(>= % 0)))
 
 (s/def ::full-data
   (s/keys :req [::fully-answered?
@@ -34,7 +34,6 @@
   :ret vector?)
 
 (defn view [data]
-  (println "!!!!!!" data)
   (if (::scored? data)
     (score-view data)
     (quiz-view data)))
