@@ -8,8 +8,8 @@
 ;; -- Data definition and constructor --
 
 (s/def ::questions (s/coll-of record? :min-count 1))
-(s/def ::current (s/and int? #(>= % 0)))
-(s/def ::score (s/and int? #(>= % 0)))
+(s/def ::current nat-int?)
+(s/def ::score nat-int?)
 
 ;; -- Quiz definition --
 
