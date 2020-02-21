@@ -7,7 +7,7 @@
 (declare answer-view)
 
 (s/def ::text string?)
-(s/def ::answers (s/coll-of string? :min-count 1))
+(s/def ::answers (s/coll-of string? :min-count 2))
 (s/def ::correct nat-int?)
 (s/def ::selected nat-int?)
 
@@ -50,7 +50,7 @@
 
 (s/fdef single-answer-question
   :args (s/and (s/cat :text ::text :answers ::answers :correct ::correct)
-               (fn [answers correct] (index-in-range? correct answers)))
+               (fn [{:keys [answers correct]}] (index-in-range? correct answers)))
   :ret ::single-answer-question)
 
 (defn single-answer-question [text answers correct]
