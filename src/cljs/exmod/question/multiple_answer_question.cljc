@@ -1,17 +1,19 @@
 (ns exmod.question.multiple-answer-question
-  (:require [exmod.question :refer [Question]]
+  (:require [exmod.question :as question :refer [Question question-type]]
             [clojure.spec.alpha :as s]
             [re-frame.core :refer [dispatch]]
             [exmod.utils :refer [index-in-range?]]))
 
-(declare answer-view)
+(declare answer-view MultipleAnswerQuestion)
+
+;; -- Specification --
 
 (s/def ::text string?)
 (s/def ::answers (s/coll-of string? :min-count 2))
 (s/def ::correct (s/coll-of nat-int? :min-count 1 :kind set?))
 (s/def ::selected (s/coll-of nat-int? :kind set?))
 
-(s/def ::multiple-answer-question
+(defmethod question-type MultipleAnswerQuestion [_]
   (s/and (s/keys :req-unq [::text ::answers ::correct ::selected])
 
          ;; Each correct answer should be in the list of answers
@@ -19,6 +21,8 @@
 
          ;; Each selected answer should be in the list of answers
          (fn [{:keys [answers selected]}] (every? #(index-in-range? % answers) selected))))
+
+;; -- Record definition --
 
 (defrecord MultipleAnswerQuestion [text answers correct selected]
   Question
@@ -51,11 +55,13 @@
       :class (if selected? "selected")}
      answer]))
 
+;; -- Constructor --
+
 (s/fdef multiple-answer-question
-  :args (s/and (s/cat :text ::text
-                      :answers ::answers
-                      :correct (s/* nat-int?)))
-  :ret ::multiple-answer-question)
+  :args (s/cat :text    ::text
+               :answers ::answers
+               :correct (s/* nat-int?))
+  :ret ::question/question)
 
 (defn multiple-answer-question [text answers & correct]
   (->MultipleAnswerQuestion text answers (into #{} correct) #{}))

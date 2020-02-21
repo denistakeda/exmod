@@ -1,17 +1,19 @@
 (ns exmod.question.single-answer-question
-  (:require [exmod.question :refer [Question]]
+  (:require [exmod.question :as question :refer [Question question-type]]
             [re-frame.core :refer [dispatch]]
             [clojure.spec.alpha :as s]
             [exmod.utils :refer [index-in-range?]]))
 
-(declare answer-view)
+(declare answer-view SingleAnswerQuestion)
+
+;; -- Specification --
 
 (s/def ::text string?)
 (s/def ::answers (s/coll-of string? :min-count 2))
 (s/def ::correct nat-int?)
 (s/def ::selected nat-int?)
 
-(s/def ::single-answer-question
+(defmethod question-type SingleAnswerQuestion [_]
   (s/and (s/keys :req-unq [::text ::answers ::correct]
                  :opt-unq [::selected])
 
@@ -21,6 +23,8 @@
          ;; Selected answer is either nil or in the list of answers
          (s/or :selected (fn [{:keys [answers selected]}] (index-in-range? selected answers))
                :unselected #(-> % :selected nil?))))
+
+;; -- Record definition --
 
 (defrecord SingleAnswerQuestion [text answers correct selected]
   Question
@@ -48,10 +52,13 @@
                                :class   (if (= selected-id idx) "selected")}
                   answer])
 
+;; -- Constructor --
+
 (s/fdef single-answer-question
-  :args (s/and (s/cat :text ::text :answers ::answers :correct ::correct)
-               (fn [{:keys [answers correct]}] (index-in-range? correct answers)))
-  :ret ::single-answer-question)
+  :args (s/cat :text    ::text
+               :answers ::answers
+               :correct ::correct)
+  :ret ::question/question)
 
 (defn single-answer-question [text answers correct]
   (->SingleAnswerQuestion text answers correct nil))
